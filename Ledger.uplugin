@@ -1,0 +1,28 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Ledger",
+	"Description": "Provides a system for tracking gameplay state.",
+	"Category": "Other",
+	"CreatedBy": "Owl Creek Games",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "Ledger",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "LedgerEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
