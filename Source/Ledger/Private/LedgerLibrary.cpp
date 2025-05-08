@@ -18,74 +18,74 @@ namespace
 	}
 }
 
-void ULedgerLibrary::TryGetInt(UObject* WorldContextObject, const FName DomainName, const FName Key, int32& OutValue, bool& bSuccess)
+void ULedgerLibrary::TryGetInt(UObject* WorldContextObject, const FName DomainName, const FName Name, int32& OutValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (const ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TryGet<int32>(DomainName, Key, OutValue);
+		bSuccess = Registry->TryGet<int32>(DomainName, Name, OutValue);
 	}
 }
 
-void ULedgerLibrary::TryGetFloat(UObject* WorldContextObject, const FName DomainName, const FName Key, float& OutValue, bool& bSuccess)
+void ULedgerLibrary::TryGetFloat(UObject* WorldContextObject, const FName DomainName, const FName Name, float& OutValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (const ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TryGet<float>(DomainName, Key, OutValue);
+		bSuccess = Registry->TryGet<float>(DomainName, Name, OutValue);
 	}
 }
 
-void ULedgerLibrary::TryGetBool(UObject* WorldContextObject, const FName DomainName, const FName Key, bool& OutValue, bool& bSuccess)
+void ULedgerLibrary::TryGetBool(UObject* WorldContextObject, const FName DomainName, const FName Name, bool& OutValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (const ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TryGet<bool>(DomainName, Key, OutValue);
+		bSuccess = Registry->TryGet<bool>(DomainName, Name, OutValue);
 	}
 }
 
-void ULedgerLibrary::TryGetString(UObject* WorldContextObject, const FName DomainName, const FName Key, FString& OutValue, bool& bSuccess)
+void ULedgerLibrary::TryGetString(UObject* WorldContextObject, const FName DomainName, const FName Name, FString& OutValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (const ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TryGet<FString>(DomainName, Key, OutValue);
+		bSuccess = Registry->TryGet<FString>(DomainName, Name, OutValue);
 	}
 }
 
-void ULedgerLibrary::TrySetInt(UObject* WorldContextObject, const FName DomainName, const FName Key, int32 InValue, bool& bSuccess)
+void ULedgerLibrary::TrySetInt(UObject* WorldContextObject, const FName DomainName, const FName Name, int32 InValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TrySet<int32>(DomainName, Key, InValue);
+		bSuccess = Registry->TrySet<int32>(DomainName, Name, InValue);
 	}
 }
 
-void ULedgerLibrary::TrySetFloat(UObject* WorldContextObject, const FName DomainName, const FName Key, float InValue, bool& bSuccess)
+void ULedgerLibrary::TrySetFloat(UObject* WorldContextObject, const FName DomainName, const FName Name, float InValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TrySet<float>(DomainName, Key, InValue);
+		bSuccess = Registry->TrySet<float>(DomainName, Name, InValue);
 	}
 }
 
-void ULedgerLibrary::TrySetBool(UObject* WorldContextObject, const FName DomainName, const FName Key, bool InValue, bool& bSuccess)
+void ULedgerLibrary::TrySetBool(UObject* WorldContextObject, const FName DomainName, const FName Name, bool InValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TrySet<bool>(DomainName, Key, InValue);
+		bSuccess = Registry->TrySet<bool>(DomainName, Name, InValue);
 	}
 }
 
-void ULedgerLibrary::TrySetString(UObject* WorldContextObject, const FName DomainName, const FName Key, const FString& InValue, bool& bSuccess)
+void ULedgerLibrary::TrySetString(UObject* WorldContextObject, const FName DomainName, const FName Name, const FString& InValue, bool& bSuccess)
 {
 	bSuccess = false;
 	if (ULedgerSubsystem* Registry = GetWorldStateSubsystem(WorldContextObject))
 	{
-		bSuccess = Registry->TrySet<FString>(DomainName, Key, InValue);
+		bSuccess = Registry->TrySet<FString>(DomainName, Name, InValue);
 	}
 }

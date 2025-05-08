@@ -6,10 +6,10 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "LedgerSubsystem.generated.h"
 
-class ULedgerDomainSchemaData;
+class ULedgerSchemaConfig;
 struct FLedgerValue;
 class ULedgerDomain;
-class ULedgerData;
+class ULedgerConfig;
 
 /**
  * 
@@ -21,31 +21,27 @@ class LEDGER_API ULedgerSubsystem : public UWorldSubsystem
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-
-	UFUNCTION(BlueprintCallable, Category = "World State")
-	bool CreateDomain(FName DomainName, TSubclassOf<ULedgerDomain> DomainClass);
-
-	UFUNCTION(BlueprintCallable, Category = "World State")
-	bool CreateDomainWithSchema(FName DomainName, TSubclassOf<ULedgerDomain> DomainClass, ULedgerDomainSchemaData* Schema);
-
+	void InitializeFromConfig(const TObjectPtr<ULedgerConfig>& LedgerConfig);
 	
-	bool TrySetValue(FName DomainName, FName Key, const FLedgerValue& Value);
-	bool TryGetValue(FName DomainName, FName Key, FLedgerValue& OutValue) const;
+	UFUNCTION(BlueprintCallable, Category = "Ledger")
+	virtual TArray<FName> GetDomainNames() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Ledger")
+	virtual TArray<FName> GetTypedDomainNames() const;
+	
+	bool TrySetValue(FName DomainName, FName Name, const FLedgerValue& Value);
+	bool TryGetValue(FName DomainName, FName Name, FLedgerValue& OutValue) const;
 	
 	template<typename T>
-	bool TrySet(FName DomainName, FName Key, const T& InValue);
+	bool TrySet(FName DomainName, FName Name, const T& InValue);
 
 	template<typename T>
-	bool TryGet(FName DomainName, FName Key, T& OutValue) const;
+	bool TryGet(FName DomainName, FName Name, T& OutValue) const;
 	
 private:
 	UPROPERTY()
-	TObjectPtr<ULedgerData> RuntimeRegistryData;
-	
-	UPROPERTY()
 	TMap<FName, TObjectPtr<ULedgerDomain>> Domains;
 	
-	static TObjectPtr<ULedgerData> TryLoadStateRegistryData();
-	void InitializeDomains(const TObjectPtr<ULedgerData>& StateRegistryData);
+	static TObjectPtr<ULedgerConfig> TryLoadLedgerConfigAsset();
 	void RegisterDomain(const FName Name, const TObjectPtr<ULedgerDomain>& Domain);
 };

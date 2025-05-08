@@ -3,42 +3,42 @@
 #include "LedgerDomainLibrary.h"
 #include "LedgerDomain.h"
 
-void ULedgerDomainLibrary::TryGetInt(ULedgerDomain* Domain, FName Key, int32& OutValue, bool& bSuccess)
+void ULedgerDomainLibrary::TryGetInt(ULedgerDomain* Domain, FName Name, int32& OutValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TryGet<int32>(Key, OutValue) : false;
+	bSuccess = Domain ? Domain->TryGet<int32>(Name, OutValue) : false;
 }
 
-void ULedgerDomainLibrary::TryGetFloat(ULedgerDomain* Domain, FName Key, float& OutValue, bool& bSuccess)
+void ULedgerDomainLibrary::TryGetFloat(ULedgerDomain* Domain, FName Name, float& OutValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TryGet<float>(Key, OutValue) : false;
+	bSuccess = Domain ? Domain->TryGet<float>(Name, OutValue) : false;
 }
 
-void ULedgerDomainLibrary::TryGetBool(ULedgerDomain* Domain, FName Key, bool& OutValue, bool& bSuccess)
+void ULedgerDomainLibrary::TryGetBool(ULedgerDomain* Domain, FName Name, bool& OutValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TryGet<bool>(Key, OutValue) : false;
+	bSuccess = Domain ? Domain->TryGet<bool>(Name, OutValue) : false;
 }
 
-void ULedgerDomainLibrary::TryGetString(ULedgerDomain* Domain, FName Key, FString& OutValue, bool& bSuccess)
+void ULedgerDomainLibrary::TryGetString(ULedgerDomain* Domain, FName Name, FString& OutValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TryGet<FString>(Key, OutValue) : false;
+	bSuccess = Domain ? Domain->TryGet<FString>(Name, OutValue) : false;
 }
 
-void ULedgerDomainLibrary::TrySetInt(ULedgerDomain* Domain, FName Key, int32 InValue, bool& bSuccess)
+void ULedgerDomainLibrary::TrySetInt(ULedgerDomain* Domain, FName Name, int32 InValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TrySet<int32>(Key, InValue) : false;
+	bSuccess = Domain ? Domain->TrySet<int32>(Name, InValue) : false;
 }
 
-void ULedgerDomainLibrary::TrySetFloat(ULedgerDomain* Domain, FName Key, float InValue, bool& bSuccess)
+void ULedgerDomainLibrary::TrySetFloat(ULedgerDomain* Domain, FName Name, float InValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TrySet<float>(Key, InValue) : false;
+	bSuccess = Domain ? Domain->TrySet<float>(Name, InValue) : false;
 }
 
-void ULedgerDomainLibrary::TrySetBool(ULedgerDomain* Domain, FName Key, bool InValue, bool& bSuccess)
+void ULedgerDomainLibrary::TrySetBool(ULedgerDomain* Domain, FName Name, bool InValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TrySet<bool>(Key, InValue) : false;
+	bSuccess = Domain ? Domain->TrySet<bool>(Name, InValue) : false;
 }
 
-void ULedgerDomainLibrary::TrySetString(ULedgerDomain* Domain, FName Key, const FString& InValue, bool& bSuccess)
+void ULedgerDomainLibrary::TrySetString(ULedgerDomain* Domain, FName Name, const FString& InValue, bool& bSuccess)
 {
-	bSuccess = Domain ? Domain->TrySet<FString>(Key, InValue) : false;
+	bSuccess = Domain ? Domain->TrySet<FString>(Name, InValue) : false;
 }

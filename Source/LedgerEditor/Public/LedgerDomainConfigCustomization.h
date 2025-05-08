@@ -4,7 +4,7 @@
 
 #include "IDetailCustomization.h"
 
-class FLedgerDomainDataCustomization final : public IDetailCustomization
+class FLedgerDomainConfigCustomization final : public IDetailCustomization
 {
 public:
 	static TSharedRef<IDetailCustomization> MakeInstance();

@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+#include "LedgerDomainConfig.h"
 #include "LedgerSubsystem.h"
+#include "Settings/LedgerEditorSettings.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
@@ -19,7 +21,15 @@ public:
 		WorldContext.SetCurrentWorld(TestWorld);
 		
 		Subsystem = TestWorld->GetSubsystem<ULedgerSubsystem>();
-		Subsystem->CreateDomain("TestDomain", ULedgerDomain::StaticClass());
+		
+		const auto Domain = NewObject<ULedgerDomainConfig>();
+		Domain->DomainName = FName("TestDomain");
+		Domain->DomainClass = ULedgerDomain::StaticClass();
+
+		const auto Config = NewObject<ULedgerConfig>();
+		Config->Domains.Add(Domain);
+		
+		Subsystem->InitializeFromConfig(Config);
 		
 		check(Subsystem);
 	}

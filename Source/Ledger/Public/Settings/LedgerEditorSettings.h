@@ -6,7 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
-#include "LedgerData.h"
+#include "LedgerConfig.h"
 #include "LedgerEditorSettings.generated.h"
 
 /**
@@ -20,7 +20,7 @@ class LEDGER_API ULedgerEditorSettings : public UDeveloperSettings
 
 public:
 	UPROPERTY(EditAnywhere, Config, Category = "Ledger")
-	TSoftObjectPtr<ULedgerData> WorldStateData;
+	TSoftObjectPtr<ULedgerConfig> LedgerConfig;
 	
 	static const ULedgerEditorSettings* Get()
 	{

@@ -5,20 +5,20 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "LedgerDomain.h"
-#include "LedgerDomainSchemaData.h"
-#include "LedgerDomainData.generated.h"
+#include "LedgerDomainConfig.generated.h"
+
+class ULedgerSchemaConfig;
 
 /**
  * Represents a single domain configuration for use in a state registry.
  * Can be reused across registries or configured independently.
  */
-UCLASS(BlueprintType, meta = (DisplayName = "Ledger Domain"))
-class LEDGER_API ULedgerDomainData : public UDataAsset
+UCLASS(BlueprintType, meta = (DisplayName = "Ledger Domain Config"))
+class LEDGER_API ULedgerDomainConfig : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
-
 	// Name used to register the domain in the state registry
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Domain")
 	FName DomainName;
@@ -29,7 +29,7 @@ public:
 
 	// Optional schema (only used if the domain class requires one)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Domain")
-	TObjectPtr<ULedgerDomainSchemaData> SchemaAsset = nullptr;
+	TObjectPtr<ULedgerSchemaConfig> SchemaAsset = nullptr;
 
 #if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;

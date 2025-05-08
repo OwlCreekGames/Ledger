@@ -6,94 +6,94 @@
 #include "LedgerDomain.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_HasKey_TrueAfterSet,
-	"Ledger.LedgerDomain.HasKey.TrueAfterSet",
+	FLedgerDomain_HasName_TrueAfterSet,
+	"Ledger.LedgerDomain.HasName.TrueAfterSet",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_HasKey_TrueAfterSet::RunTest(const FString&)
+bool FLedgerDomain_HasName_TrueAfterSet::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
-	Domain->TrySet<int32>(Key, 123);
+	const FName Name = TEXT("TestName");
+	Domain->TrySet<int32>(Name, 123);
 
 	// Act
-	const bool bHasKey = Domain->HasKey(Key);
+	const bool bHasName = Domain->HasName(Name);
 
 	// Assert
-	TestTrue(TEXT("HasKey should return true for a key that was set"), bHasKey);
+	TestTrue(TEXT("HasName should return true for a name that was set"), bHasName);
 
 	return true;
 }
 
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_HasKey_FalseForUnsetKey,
-	"Ledger.LedgerDomain.HasKey.FalseForUnsetKey",
+	FLedgerDomain_HasName_FalseForUnsetName,
+	"Ledger.LedgerDomain.HasName.FalseForUnsetName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_HasKey_FalseForUnsetKey::RunTest(const FString&)
+bool FLedgerDomain_HasName_FalseForUnsetName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
 	// Act
-	const bool bHasKey = Domain->HasKey(TEXT("InvalidKey"));
+	const bool bHasName = Domain->HasName(TEXT("InvalidName"));
 
 	// Assert
-	TestFalse(TEXT("HasKey should return false for a key that was never set"), bHasKey);
+	TestFalse(TEXT("HasName should return false for a name that was never set"), bHasName);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_HasKey_EmptyName,
-	"Ledger.LedgerDomain.HasKey.EmptyKey",
+	FLedgerDomain_HasName_EmptyName,
+	"Ledger.LedgerDomain.HasName.EmptyName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_HasKey_EmptyName::RunTest(const FString&)
+bool FLedgerDomain_HasName_EmptyName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName EmptyKey = NAME_None;
+	const FName EmptyName = NAME_None;
 
 	// Act & Assert
-	const bool bHasKey = Domain->HasKey(EmptyKey);
-	TestFalse(TEXT("HasKey should return false for NAME_None"), bHasKey);
+	const bool bHasName = Domain->HasName(EmptyName);
+	TestFalse(TEXT("HasName should return false for NAME_None"), bHasName);
 
 	// Act & Assert
-	Domain->TrySet<int32>(EmptyKey, 1);
-	TestTrue(TEXT("HasKey should return true after explicitly setting NAME_None"), Domain->HasKey(EmptyKey));
+	Domain->TrySet<int32>(EmptyName, 1);
+	TestTrue(TEXT("HasName should return true after explicitly setting NAME_None"), Domain->HasName(EmptyName));
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_GetKeys,
-	"Ledger.LedgerDomain.GetKeys",
+	FLedgerDomain_GetNames,
+	"Ledger.LedgerDomain.GetNames",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_GetKeys::RunTest(const FString&)
+bool FLedgerDomain_GetNames::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	Domain->TrySet<int32>(TEXT("Key1"), 1);
-	Domain->TrySet<int32>(TEXT("Key2"), 2);
+	Domain->TrySet<int32>(TEXT("Name1"), 1);
+	Domain->TrySet<int32>(TEXT("Name2"), 2);
 
 	// Act
-	const TArray<FName> Keys = Domain->GetKeys();
+	const TArray<FName> Names = Domain->GetNames();
 
 	// Assert
-	TestEqual(TEXT("Should return 2 keys"), Keys.Num(), 2);
-	TestTrue(TEXT("Should contain 'Key1'"), Keys.Contains(TEXT("Key1")));
-	TestTrue(TEXT("Should contain 'Key2'"), Keys.Contains(TEXT("Key2")));
+	TestEqual(TEXT("Should return 2 names"), Names.Num(), 2);
+	TestTrue(TEXT("Should contain 'Name1'"), Names.Contains(TEXT("Name1")));
+	TestTrue(TEXT("Should contain 'Name2'"), Names.Contains(TEXT("Name2")));
 
 	return true;
 }
@@ -109,15 +109,15 @@ bool FLedgerDomain_TrySetValue::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 	const FLedgerValue Value(123);
 
 	// Act
-	const bool bSet = Domain->TrySetValue(Key, Value);
+	const bool bSet = Domain->TrySetValue(Name, Value);
 
 	// Assert
 	TestTrue(TEXT("TrySetValue should return true"), bSet);
-	TestTrue(TEXT("HasKey should return true for a key that was set"), Domain->HasKey(Key));
+	TestTrue(TEXT("HasName should return true for a name that was set"), Domain->HasName(Name));
 
 	return true;
 }
@@ -133,14 +133,14 @@ bool FLedgerDomain_TrySet_Int32::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
-	const bool bSet = Domain->TrySet<int32>(Key, 123);
+	const bool bSet = Domain->TrySet<int32>(Name, 123);
 
 	// Assert
 	TestTrue(TEXT("TrySet should return true"), bSet);
-	TestTrue(TEXT("HasKey should return true for a key that was set"), Domain->HasKey(Key));
+	TestTrue(TEXT("HasName should return true for a name that was set"), Domain->HasName(Name));
 
 	return true;
 }
@@ -156,14 +156,14 @@ bool FLedgerDomain_TrySet_Float::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
-	const bool bSet = Domain->TrySet<float>(Key, 1.5f);
+	const bool bSet = Domain->TrySet<float>(Name, 1.5f);
 
 	// Assert
 	TestTrue(TEXT("TrySet should return true"), bSet);
-	TestTrue(TEXT("HasKey should return true for a key that was set"), Domain->HasKey(Key));
+	TestTrue(TEXT("HasName should return true for a name that was set"), Domain->HasName(Name));
 
 	return true;
 }
@@ -179,14 +179,14 @@ bool FLedgerDomain_TrySet_Bool::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
-	const bool bSet = Domain->TrySet<bool>(Key, true);
+	const bool bSet = Domain->TrySet<bool>(Name, true);
 
 	// Assert
 	TestTrue(TEXT("TrySet should return true"), bSet);
-	TestTrue(TEXT("HasKey should return true for a key that was set"), Domain->HasKey(Key));
+	TestTrue(TEXT("HasName should return true for a name that was set"), Domain->HasName(Name));
 
 	return true;
 }
@@ -202,21 +202,21 @@ bool FLedgerDomain_TrySet_String::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
-	const bool bSet = Domain->TrySet<FString>(Key, FString("Test String"));
+	const bool bSet = Domain->TrySet<FString>(Name, FString("Test String"));
 
 	// Assert
 	TestTrue(TEXT("TrySet should return true"), bSet);
-	TestTrue(TEXT("HasKey should return true for a key that was set"), Domain->HasKey(Key));
+	TestTrue(TEXT("HasName should return true for a name that was set"), Domain->HasName(Name));
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FLedgerDomain_TryGetValue,
-	"Ledger.LedgerDomain.TryGetValue.ValidKey",
+	"Ledger.LedgerDomain.TryGetValue.ValidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FLedgerDomain_TryGetValue::RunTest(const FString&)
@@ -225,13 +225,13 @@ bool FLedgerDomain_TryGetValue::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 	const FLedgerValue Value(123);
-	Domain->TrySetValue(Key, Value);
+	Domain->TrySetValue(Name, Value);
 
 	// Act
 	FLedgerValue OutValue;
-	const bool bGet = Domain->TryGetValue(Key, OutValue);
+	const bool bGet = Domain->TryGetValue(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGetValue should return true"), bGet);
@@ -244,7 +244,7 @@ bool FLedgerDomain_TryGetValue::RunTest(const FString&)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FLedgerDomain_TryGet_Int32,
-	"Ledger.LedgerDomain.TryGet.Int32.ValidKey",
+	"Ledger.LedgerDomain.TryGet.Int32.ValidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FLedgerDomain_TryGet_Int32::RunTest(const FString&)
@@ -253,12 +253,12 @@ bool FLedgerDomain_TryGet_Int32::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
-	Domain->TrySet<int32>(Key, 123);
+	const FName Name = TEXT("TestName");
+	Domain->TrySet<int32>(Name, 123);
 
 	// Act
 	int32 OutValue;
-	const bool bGet = Domain->TryGet<int32>(Key, OutValue);
+	const bool bGet = Domain->TryGet<int32>(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGet should return true"), bGet);
@@ -269,7 +269,7 @@ bool FLedgerDomain_TryGet_Int32::RunTest(const FString&)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FLedgerDomain_TryGet_Float,
-	"Ledger.LedgerDomain.TryGet.Float.ValidKey",
+	"Ledger.LedgerDomain.TryGet.Float.ValidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FLedgerDomain_TryGet_Float::RunTest(const FString&)
@@ -278,12 +278,12 @@ bool FLedgerDomain_TryGet_Float::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
-	Domain->TrySet<float>(Key, 1.5f);
+	const FName Name = TEXT("TestName");
+	Domain->TrySet<float>(Name, 1.5f);
 
 	// Act
 	float OutValue;
-	const bool bGet = Domain->TryGet<float>(Key, OutValue);
+	const bool bGet = Domain->TryGet<float>(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGet should return true"), bGet);
@@ -294,7 +294,7 @@ bool FLedgerDomain_TryGet_Float::RunTest(const FString&)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FLedgerDomain_TryGet_Bool,
-	"Ledger.LedgerDomain.TryGet.Bool.ValidKey",
+	"Ledger.LedgerDomain.TryGet.Bool.ValidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FLedgerDomain_TryGet_Bool::RunTest(const FString&)
@@ -303,12 +303,12 @@ bool FLedgerDomain_TryGet_Bool::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
-	Domain->TrySet<bool>(Key, true);
+	const FName Name = TEXT("TestName");
+	Domain->TrySet<bool>(Name, true);
 
 	// Act
 	bool OutValue;
-	const bool bGet = Domain->TryGet<bool>(Key, OutValue);
+	const bool bGet = Domain->TryGet<bool>(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGet should return true"), bGet);
@@ -319,7 +319,7 @@ bool FLedgerDomain_TryGet_Bool::RunTest(const FString&)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FLedgerDomain_TryGet_String,
-	"Ledger.LedgerDomain.TryGet.String.ValidKey",
+	"Ledger.LedgerDomain.TryGet.String.ValidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FLedgerDomain_TryGet_String::RunTest(const FString&)
@@ -328,12 +328,12 @@ bool FLedgerDomain_TryGet_String::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
-	Domain->TrySet<FString>(Key, FString("Test String"));
+	const FName Name = TEXT("TestName");
+	Domain->TrySet<FString>(Name, FString("Test String"));
 
 	// Act
 	FString OutValue;
-	const bool bGet = Domain->TryGet<FString>(Key, OutValue);
+	const bool bGet = Domain->TryGet<FString>(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGet should return true"), bGet);
@@ -343,11 +343,11 @@ bool FLedgerDomain_TryGet_String::RunTest(const FString&)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_TryGetValue_InvalidKey,
-	"Ledger.LedgerDomain.TryGetValue.InvalidKey",
+	FLedgerDomain_TryGetValue_InvalidName,
+	"Ledger.LedgerDomain.TryGetValue.InvalidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_TryGetValue_InvalidKey::RunTest(const FString&)
+bool FLedgerDomain_TryGetValue_InvalidName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
@@ -355,20 +355,20 @@ bool FLedgerDomain_TryGetValue_InvalidKey::RunTest(const FString&)
 	
 	// Act
 	FLedgerValue OutValue;
-	const bool bGet = Domain->TryGetValue(TEXT("InvalidKey"), OutValue);
+	const bool bGet = Domain->TryGetValue(TEXT("InvalidName"), OutValue);
 
 	// Assert
-	TestFalse(TEXT("TryGetValue should return false for non-existent key"), bGet);
+	TestFalse(TEXT("TryGetValue should return false for non-existent name"), bGet);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_TryGet_Int32_InvalidKey,
-	"Ledger.LedgerDomain.TryGet.Int32.InvalidKey",
+	FLedgerDomain_TryGet_Int32_InvalidName,
+	"Ledger.LedgerDomain.TryGet.Int32.InvalidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_TryGet_Int32_InvalidKey::RunTest(const FString&)
+bool FLedgerDomain_TryGet_Int32_InvalidName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
@@ -376,20 +376,20 @@ bool FLedgerDomain_TryGet_Int32_InvalidKey::RunTest(const FString&)
 	
 	// Act
 	int32 OutValue;
-	const bool bGet = Domain->TryGet<int32>(TEXT("InvalidKey"), OutValue);
+	const bool bGet = Domain->TryGet<int32>(TEXT("InvalidName"), OutValue);
 
 	// Assert
-	TestFalse(TEXT("TryGet should return false for non-existent key"), bGet);
+	TestFalse(TEXT("TryGet should return false for non-existent name"), bGet);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_TryGet_Float_InvalidKey,
-	"Ledger.LedgerDomain.TryGet.Float.InvalidKey",
+	FLedgerDomain_TryGet_Float_InvalidName,
+	"Ledger.LedgerDomain.TryGet.Float.InvalidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_TryGet_Float_InvalidKey::RunTest(const FString&)
+bool FLedgerDomain_TryGet_Float_InvalidName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
@@ -397,20 +397,20 @@ bool FLedgerDomain_TryGet_Float_InvalidKey::RunTest(const FString&)
 	
 	// Act
 	float OutValue;
-	const bool bGet = Domain->TryGet<float>(TEXT("InvalidKey"), OutValue);
+	const bool bGet = Domain->TryGet<float>(TEXT("InvalidName"), OutValue);
 
 	// Assert
-	TestFalse(TEXT("TryGet should return false for non-existent key"), bGet);
+	TestFalse(TEXT("TryGet should return false for non-existent name"), bGet);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_TryGet_Bool_InvalidKey,
-	"Ledger.LedgerDomain.TryGet.Bool.InvalidKey",
+	FLedgerDomain_TryGet_Bool_InvalidName,
+	"Ledger.LedgerDomain.TryGet.Bool.InvalidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_TryGet_Bool_InvalidKey::RunTest(const FString&)
+bool FLedgerDomain_TryGet_Bool_InvalidName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
@@ -418,20 +418,20 @@ bool FLedgerDomain_TryGet_Bool_InvalidKey::RunTest(const FString&)
 	
 	// Act
 	bool OutValue;
-	const bool bGet = Domain->TryGet<bool>(TEXT("InvalidKey"), OutValue);
+	const bool bGet = Domain->TryGet<bool>(TEXT("InvalidName"), OutValue);
 
 	// Assert
-	TestFalse(TEXT("TryGet should return false for non-existent key"), bGet);
+	TestFalse(TEXT("TryGet should return false for non-existent name"), bGet);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerDomain_TryGet_String_InvalidKey,
-	"Ledger.LedgerDomain.TryGet.String.InvalidKey",
+	FLedgerDomain_TryGet_String_InvalidName,
+	"Ledger.LedgerDomain.TryGet.String.InvalidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerDomain_TryGet_String_InvalidKey::RunTest(const FString&)
+bool FLedgerDomain_TryGet_String_InvalidName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
@@ -439,10 +439,10 @@ bool FLedgerDomain_TryGet_String_InvalidKey::RunTest(const FString&)
 	
 	// Act
 	FString OutValue;
-	const bool bGet = Domain->TryGet<FString>(TEXT("InvalidKey"), OutValue);
+	const bool bGet = Domain->TryGet<FString>(TEXT("InvalidName"), OutValue);
 
 	// Assert
-	TestFalse(TEXT("TryGet should return false for non-existent key"), bGet);
+	TestFalse(TEXT("TryGet should return false for non-existent name"), bGet);
 
 	return true;
 }
@@ -458,12 +458,12 @@ bool FLedgerDomain_TryGet_TypeMismatch::RunTest(const FString&)
 	ULedgerDomain* Domain = NewObject<ULedgerDomain>();
 	TestNotNull(TEXT("Domain should be valid"), Domain);
 	
-	const FName Key = TEXT("TestKey");
-	Domain->TrySet<FString>(Key, TEXT("Not An Integer"));
+	const FName Name = TEXT("TestName");
+	Domain->TrySet<FString>(Name, TEXT("Not An Integer"));
 
 	// Act
 	int32 OutValue;
-	const bool bGet = Domain->TryGet<int32>(Key, OutValue);
+	const bool bGet = Domain->TryGet<int32>(Name, OutValue);
 
 	// Assert
 	TestFalse(TEXT("TryGet should return false for type mismatch"), bGet);

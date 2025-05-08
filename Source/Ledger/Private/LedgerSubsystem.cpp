@@ -2,19 +2,19 @@
 
 #include "LedgerSubsystem.h"
 
-#include "LedgerDomainData.h"
+#include "LedgerDomainConfig.h"
 #include "LedgerTypedDomain.h"
 #include "Settings/LedgerEditorSettings.h"
 
-TObjectPtr<ULedgerData> ULedgerSubsystem::TryLoadStateRegistryData()
+TObjectPtr<ULedgerConfig> ULedgerSubsystem::TryLoadLedgerConfigAsset()
 {
 	if (const ULedgerEditorSettings* Settings = ULedgerEditorSettings::Get())
 	{
-		if (Settings->WorldStateData.ToSoftObjectPath().IsValid())
+		if (Settings->LedgerConfig.ToSoftObjectPath().IsValid())
 		{
-			if (ULedgerData* StateRegistryData = Cast<ULedgerData>(Settings->WorldStateData.LoadSynchronous()))
+			if (ULedgerConfig* LedgerConfig = Cast<ULedgerConfig>(Settings->LedgerConfig.LoadSynchronous()))
 			{
-				return StateRegistryData;
+				return LedgerConfig;
 			}
 		}
 	}
@@ -25,45 +25,31 @@ TObjectPtr<ULedgerData> ULedgerSubsystem::TryLoadStateRegistryData()
 void ULedgerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
-	RuntimeRegistryData = TryLoadStateRegistryData();
-	InitializeDomains(RuntimeRegistryData);
-}
-
-bool ULedgerSubsystem::CreateDomain(FName DomainName, TSubclassOf<ULedgerDomain> DomainClass)
-{
-	if (DomainName.IsNone())
-	{
-		UE_LOG(LogLedger, Warning, TEXT("CreateDomain: Domain name is None."));
-		return false;
-	}
-
-	if (!DomainClass)
-	{
-		UE_LOG(LogLedger, Warning, TEXT("CreateDomain: Domain class is null."));
-		return false;
-	}
-
-	ULedgerDomain* NewDomain = NewObject<ULedgerDomain>(this, DomainClass);
-	RegisterDomain(DomainName, NewDomain);
-	return true;
-}
-
-bool ULedgerSubsystem::CreateDomainWithSchema(FName DomainName, TSubclassOf<ULedgerDomain> DomainClass, ULedgerDomainSchemaData* Schema)
-{
-	checkf(false, TEXT("Not implemented"));
-
-	return false;
 	
-	// if (ULedgerTypedDomain* Typed = Cast<ULedgerTypedDomain>(NewDomain))
-	// {
-	// 	Typed->InitializeFromSchema(Schema);
-	// }
-
+	InitializeFromConfig(TryLoadLedgerConfigAsset());
 }
 
+TArray<FName> ULedgerSubsystem::GetDomainNames() const
+{
+	TArray<FName> Names;
+	Domains.GetKeys(Names);
+	return Names;
+}
 
-bool ULedgerSubsystem::TrySetValue(const FName DomainName, const FName Key, const FLedgerValue& Value)
+TArray<FName> ULedgerSubsystem::GetTypedDomainNames() const
+{
+	TArray<FName> Names;
+	for (auto Domain: Domains)
+	{
+		if (Cast<ULedgerTypedDomain>(Domain.Value.Get()))
+		{
+			Names.Add(Domain.Key);
+		}
+	}
+	return Names;
+}
+
+bool ULedgerSubsystem::TrySetValue(const FName DomainName, const FName Name, const FLedgerValue& Value)
 {
 	const TObjectPtr<ULedgerDomain>* Domain = Domains.Find(DomainName);
 	if (Domain == nullptr)
@@ -72,10 +58,10 @@ bool ULedgerSubsystem::TrySetValue(const FName DomainName, const FName Key, cons
 		return false;
 	}
 
-	return Domain->Get()->TrySetValue(Key, Value);
+	return Domain->Get()->TrySetValue(Name, Value);
 }
 
-bool ULedgerSubsystem::TryGetValue(const FName DomainName, const FName Key, FLedgerValue& OutValue) const
+bool ULedgerSubsystem::TryGetValue(const FName DomainName, const FName Name, FLedgerValue& OutValue) const
 {
 	const TObjectPtr<ULedgerDomain>* Domain = Domains.Find(DomainName);
 	if (Domain == nullptr)
@@ -84,63 +70,62 @@ bool ULedgerSubsystem::TryGetValue(const FName DomainName, const FName Key, FLed
 		return false;
 	}
 	
-	return Domain->Get()->TryGetValue(Key, OutValue);
+	return Domain->Get()->TryGetValue(Name, OutValue);
 }
 
-void ULedgerSubsystem::InitializeDomains(const TObjectPtr<ULedgerData>& StateRegistryData)
+void ULedgerSubsystem::InitializeFromConfig(const TObjectPtr<ULedgerConfig>& LedgerConfig)
 {
-	if (!StateRegistryData)
+	if (LedgerConfig == nullptr)
 	{
-		UE_LOG(LogLedger, Warning, TEXT("Ledger: No world state configuration data is specified."));
+		UE_LOG(LogLedger, Warning, TEXT("Ledger: LedgerConfig is NULL; skipping InitializeDomains."));
 		return;
 	}
 
-	for (const TObjectPtr<ULedgerDomainData>& DomainAsset : StateRegistryData->Domains)
+	for (const TObjectPtr<ULedgerDomainConfig>& DomainConfig : LedgerConfig->Domains)
 	{
-		if (DomainAsset->DomainName.IsNone())
+		if (DomainConfig->DomainName.IsNone())
 		{
 			UE_LOG(LogLedger, Warning, TEXT("Ledger: Skipping domain with empty name."));
 			continue;
 		}
 
-		if (!DomainAsset->DomainClass)
+		if (!DomainConfig->DomainClass)
 		{
-			UE_LOG(LogLedger, Warning, TEXT("Ledger: Skipping domain '%s' — no class assigned."), *DomainAsset->DomainName.ToString());
+			UE_LOG(LogLedger, Warning, TEXT("Ledger: Skipping domain '%s' — no class assigned."), *DomainConfig->DomainName.ToString());
 			continue;
 		}
 		
-		ULedgerDomain* Domain = NewObject<ULedgerDomain>(this, DomainAsset->DomainClass);
-
-		/*
-		if (auto* TypedDomain = Cast<UCreekTypedStateDomain>(Domain))
+		ULedgerDomain* Domain = NewObject<ULedgerDomain>(this, DomainConfig->DomainClass);
+		
+		if (auto* TypedDomain = Cast<ULedgerTypedDomain>(Domain))
 		{
-			TypedDomain->InitializeFromSchema(DomainAsset->SchemaAsset);
+			TypedDomain->InitializeFromSchema(DomainConfig->SchemaAsset);
 		}
-		*/
 
-		RegisterDomain(DomainAsset->DomainName, Domain);
+		Domain->DomainConfig = DomainConfig;
+		RegisterDomain(DomainConfig->DomainName, Domain);
 	}
 }
 
 void ULedgerSubsystem::RegisterDomain(const FName Name, const TObjectPtr<ULedgerDomain>& Domain)
 {
 	checkf(!Domains.Contains(Name), TEXT("Ledger: Domain '%s' already registered."), *Name.ToString());
-
+	
 	Domains.Add(Name, Domain);
 }
 
 template<typename T>
-bool ULedgerSubsystem::TrySet(const FName DomainName, const FName Key, const T& InValue)
+bool ULedgerSubsystem::TrySet(const FName DomainName, const FName Name, const T& InValue)
 {
 	const FLedgerValue Value(InValue);
-	return TrySetValue(DomainName, Key, Value);
+	return TrySetValue(DomainName, Name, Value);
 }
 
 template<typename T>
-bool ULedgerSubsystem::TryGet(const FName DomainName, const FName Key, T& OutValue) const
+bool ULedgerSubsystem::TryGet(const FName DomainName, const FName Name, T& OutValue) const
 {
 	FLedgerValue Value;
-	if (TryGetValue(DomainName, Key, Value))
+	if (TryGetValue(DomainName, Name, Value))
 	{
 		return Value.TryGet(OutValue);
 	}

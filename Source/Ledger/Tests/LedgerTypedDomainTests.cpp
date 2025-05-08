@@ -2,100 +2,102 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-#include "LedgerDomainSchemaData.h"
+#include "LedgerSchemaConfig.h"
 #include "Misc/AutomationTest.h"
 #include "LedgerTypedDomain.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerTypedDomain_HasKey_TrueForKeyInSchema,
-	"Ledger.LedgerTypedDomain.HasKey.TrueForKeyInSchema",
+	FLedgerTypedDomain_HasName_TrueForNameInSchema,
+	"Ledger.LedgerTypedDomain.HasName.TrueForNameInSchema",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerTypedDomain_HasKey_TrueForKeyInSchema::RunTest(const FString&)
+bool FLedgerTypedDomain_HasName_TrueForNameInSchema::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
-
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
+	
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = 42;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
-	const bool bHasKey = Domain->HasKey(Key);
+	const bool bHasName = Domain->HasName(Name);
 
 	// Assert
-	TestTrue(TEXT("HasKey should return true for a key that is part of the schema."), bHasKey);
+	TestTrue(TEXT("HasName should return true for a name that is part of the schema."), bHasName);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerTypedDomain_HasKey_FalseForKeyNotInSchema,
-	"Ledger.LedgerTypedDomain.HasKey.FalseForKeyNotInSchema",
+	FLedgerTypedDomain_HasName_FalseForNameNotInSchema,
+	"Ledger.LedgerTypedDomain.HasName.FalseForNameNotInSchema",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerTypedDomain_HasKey_FalseForKeyNotInSchema::RunTest(const FString&)
+bool FLedgerTypedDomain_HasName_FalseForNameNotInSchema::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
-
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
+	
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = 42;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 	
-	const FName Key = TEXT("InvalidKey");
+	const FName Name = TEXT("InvalidName");
 
 	// Act
-	const bool bHasKey = Domain->HasKey(Key);
+	const bool bHasName = Domain->HasName(Name);
 
 	// Assert
-	TestFalse(TEXT("HasKey should return false for a key that is not part of the schema."), bHasKey);
+	TestFalse(TEXT("HasName should return false for a name that is not part of the schema."), bHasName);
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerTypedDomain_GetKeys,
-	"Ledger.LedgerTypedDomain.GetKeys",
+	FLedgerTypedDomain_GetNames,
+	"Ledger.LedgerTypedDomain.GetNames",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerTypedDomain_GetKeys::RunTest(const FString&)
+bool FLedgerTypedDomain_GetNames::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
-
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("Key1");
-	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries.Add(Entry);
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("Key2");
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("Name1"), Entry);
+	
+	Entry = FLedgerSchemaRow();
+	Entry.Type = ELedgerValueType::Int32;
+	Schema->Entries->AddRow(FName("Name2"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 
 	// Act
-	const TArray<FName> Keys = Domain->GetKeys();
+	const TArray<FName> Names = Domain->GetNames();
 
 	// Assert
-	TestEqual(TEXT("Should return 2 keys"), Keys.Num(), 2);
-	TestTrue(TEXT("Should contain 'Key1'"), Keys.Contains(TEXT("Key1")));
-	TestTrue(TEXT("Should contain 'Key2'"), Keys.Contains(TEXT("Key2")));
+	TestEqual(TEXT("Should return 2 names"), Names.Num(), 2);
+	TestTrue(TEXT("Should contain 'Name1'"), Names.Contains(TEXT("Name1")));
+	TestTrue(TEXT("Should contain 'Name2'"), Names.Contains(TEXT("Name2")));
 
 	return true;
 }
@@ -108,22 +110,23 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FLedgerTypedDomain_TryGetValue_Int32_Default::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = TEXT("TestKey");
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = 42;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
 	FLedgerValue OutValue;
-	const bool bGet = Domain->TryGetValue(Key, OutValue);
+	const bool bGet = Domain->TryGetValue(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGetValue should return true"), bGet);
@@ -142,22 +145,23 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FLedgerTypedDomain_TryGetValue_Float_Default::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Float;
 	Entry.DefaultFloat = 1.5f;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
 	FLedgerValue OutValue;
-	const bool bGet = Domain->TryGetValue(Key, OutValue);
+	const bool bGet = Domain->TryGetValue(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGetValue should return true"), bGet);
@@ -176,22 +180,23 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FLedgerTypedDomain_TryGetValue_Bool_Default::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = TEXT("TestKey");
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Bool;
 	Entry.DefaultBool = true;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
 	FLedgerValue OutValue;
-	const bool bGet = Domain->TryGetValue(Key, OutValue);
+	const bool bGet = Domain->TryGetValue(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGetValue should return true"), bGet);
@@ -210,22 +215,23 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FLedgerTypedDomain_TryGetValue_String_Default::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::String;
 	Entry.DefaultString = TEXT("String Value");
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 
 	// Act
 	FLedgerValue OutValue;
-	const bool bGet = Domain->TryGetValue(Key, OutValue);
+	const bool bGet = Domain->TryGetValue(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TryGetValue should return true"), bGet);
@@ -237,32 +243,33 @@ bool FLedgerTypedDomain_TryGetValue_String_Default::RunTest(const FString&)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerTypedDomain_TrySetValue_TrueForValidKeyAndValue,
-	"Ledger.LedgerTypedDomain.TrySetValue.TrueForValidKeyAndValue",
+	FLedgerTypedDomain_TrySetValue_TrueForValidNameAndValue,
+	"Ledger.LedgerTypedDomain.TrySetValue.TrueForValidNameAndValue",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerTypedDomain_TrySetValue_TrueForValidKeyAndValue::RunTest(const FString&)
+bool FLedgerTypedDomain_TrySetValue_TrueForValidNameAndValue::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
-
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
+	
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 	const FLedgerValue Value(123);
 	
 	// Act
-	const bool bSet = Domain->TrySetValue(Key, Value);
+	const bool bSet = Domain->TrySetValue(Name, Value);
 
 	// Assert
 	TestTrue(TEXT("TrySetValue should return true"), bSet);
-	TestTrue(TEXT("HasKey should return true for a key that was set"), Domain->HasKey(Key));
+	TestTrue(TEXT("HasName should return true for a name that was set"), Domain->HasName(Name));
 
 	return true;
 }
@@ -275,21 +282,23 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FLedgerTypedDomain_TrySetValue_FalseForIncorrectType::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
-
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
+	
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries.Add(Entry);
+	Entry.DefaultInt32 = 42;
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 	const FLedgerValue Value(1.5f);
 	
 	// Act
-	const bool bSet = Domain->TrySetValue(Key, Value);
+	const bool bSet = Domain->TrySetValue(Name, Value);
 
 	// Assert
 	TestFalse(TEXT("TrySetValue should return false"), bSet);
@@ -298,28 +307,30 @@ bool FLedgerTypedDomain_TrySetValue_FalseForIncorrectType::RunTest(const FString
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FLedgerTypedDomain_TrySetValue_FalseForInvalidKey,
-	"Ledger.LedgerTypedDomain.TrySetValue.FalseForInvalidKey",
+	FLedgerTypedDomain_TrySetValue_FalseForInvalidName,
+	"Ledger.LedgerTypedDomain.TrySetValue.FalseForInvalidName",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FLedgerTypedDomain_TrySetValue_FalseForInvalidKey::RunTest(const FString&)
+bool FLedgerTypedDomain_TrySetValue_FalseForInvalidName::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
-
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
+	
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries.Add(Entry);
+	Entry.DefaultInt32 = 42;
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 
-	const FName Key = TEXT("InvalidKey");
+	const FName Name = TEXT("InvalidName");
 	const FLedgerValue Value(123);
 	
 	// Act
-	const bool bSet = Domain->TrySetValue(Key, Value);
+	const bool bSet = Domain->TrySetValue(Name, Value);
 
 	// Assert
 	TestFalse(TEXT("TrySetValue should return false"), bSet);
@@ -335,25 +346,26 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FLedgerTypedDomain_TryGetValue_Update::RunTest(const FString&)
 {
 	// Setup
-	ULedgerDomainSchemaData* Schema = NewObject<ULedgerDomainSchemaData>();
+	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
+	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
+	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerDomainSchemaEntry Entry = FLedgerDomainSchemaEntry();
-	Entry.Name = FName("TestKey");
+	FLedgerSchemaRow Entry = FLedgerSchemaRow();
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = -1;
-	Schema->Entries.Add(Entry);
+	Schema->Entries->AddRow(FName("TestName"), Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
 	
-	const FName Key = TEXT("TestKey");
+	const FName Name = TEXT("TestName");
 	FLedgerValue Value(42);
 	
 	// Act
-	const bool bSet = Domain->TrySetValue(Key, Value);
+	const bool bSet = Domain->TrySetValue(Name, Value);
 	
 	FLedgerValue OutValue;
-	const bool bGet = Domain->TryGetValue(Key, OutValue);
+	const bool bGet = Domain->TryGetValue(Name, OutValue);
 
 	// Assert
 	TestTrue(TEXT("TrySetValue should return true"), bSet);

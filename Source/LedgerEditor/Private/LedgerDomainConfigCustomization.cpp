@@ -1,8 +1,8 @@
 ﻿// Copyright Owl Creek Games. All Rights Reserved.
 
-#include "LedgerDomainDataCustomization.h"
+#include "LedgerDomainConfigCustomization.h"
 
-#include "LedgerDomainData.h"
+#include "LedgerDomainConfig.h"
 #include "LedgerTypedDomain.h" 
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
@@ -12,22 +12,22 @@
 
 #define LOCTEXT_NAMESPACE "FLedgerDomainDataCustomization"
 
-TSharedRef<IDetailCustomization> FLedgerDomainDataCustomization::MakeInstance()
+TSharedRef<IDetailCustomization> FLedgerDomainConfigCustomization::MakeInstance()
 {
-	return MakeShareable(new FLedgerDomainDataCustomization);
+	return MakeShareable(new FLedgerDomainConfigCustomization);
 }
 
-void FLedgerDomainDataCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
+void FLedgerDomainConfigCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 {
 	IDetailCategoryBuilder& Category = DetailBuilder.EditCategory("Domain");
 
-	const TSharedPtr<IPropertyHandle> DomainNameHandle = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(ULedgerDomainData, DomainName));
+	const TSharedPtr<IPropertyHandle> DomainNameHandle = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(ULedgerDomainConfig, DomainName));
 	if (DomainNameHandle.IsValid())
 	{
 		Category.AddProperty(DomainNameHandle.ToSharedRef());
 	}
 	
-	const TSharedPtr<IPropertyHandle> DomainClassHandle = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(ULedgerDomainData, DomainClass));
+	const TSharedPtr<IPropertyHandle> DomainClassHandle = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(ULedgerDomainConfig, DomainClass));
 	if (DomainClassHandle.IsValid())
 	{
 		Category.AddProperty(DomainClassHandle.ToSharedRef());
@@ -42,7 +42,7 @@ void FLedgerDomainDataCustomization::CustomizeDetails(IDetailLayoutBuilder& Deta
 		}));
 	}
 	
-	const TSharedPtr<IPropertyHandle> SchemaAssetHandle = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(ULedgerDomainData, SchemaAsset));
+	const TSharedPtr<IPropertyHandle> SchemaAssetHandle = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(ULedgerDomainConfig, SchemaAsset));
 	if (DomainClassHandle.IsValid() && SchemaAssetHandle.IsValid())
 	{
 		UObject* DomainClassObj = nullptr;

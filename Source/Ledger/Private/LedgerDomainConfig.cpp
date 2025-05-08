@@ -1,6 +1,6 @@
 ﻿// Copyright Owl Creek Games. All Rights Reserved.
 
-#include "LedgerDomainData.h"
+#include "LedgerDomainConfig.h"
 #include "LedgerTypedDomain.h"
 #include "Misc/DataValidation.h"
 
@@ -8,7 +8,7 @@
 
 #define LOCTEXT_NAMESPACE "FLedgerModule"
 
-EDataValidationResult ULedgerDomainData::IsDataValid(FDataValidationContext& Context) const
+EDataValidationResult ULedgerDomainConfig::IsDataValid(FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context), EDataValidationResult::Valid);
 

@@ -6,8 +6,9 @@
 #include "LedgerDomain.h"
 #include "LedgerTypedDomain.generated.h"
 
-struct FLedgerDomainSchemaEntry;
-class ULedgerDomainSchemaData;
+struct FLedgerSchemaRow;
+class ULedgerSchemaConfig;
+
 /**
  * 
  */
@@ -17,15 +18,15 @@ class LEDGER_API ULedgerTypedDomain : public ULedgerDomain
 	GENERATED_BODY()
 public:
 
-	virtual bool TrySetValue(FName Key, const FLedgerValue& Value) override;
+	virtual bool TrySetValue(FName Name, const FLedgerValue& Value) override;
 	
-	void InitializeFromSchema(ULedgerDomainSchemaData* InSchema);
+	void InitializeFromSchema(ULedgerSchemaConfig* InSchema);
 
 private:
 	UPROPERTY()
-	TObjectPtr<ULedgerDomainSchemaData> Schema;
+	TObjectPtr<ULedgerSchemaConfig> Schema;
 	
-	TMap<FName, const FLedgerDomainSchemaEntry*> SchemaLookupMap;
+	TMap<FName, uint8*> SchemaRowMap;
 
 	void InitializeSchemaLookupMap();
 	void InitializeDefaultValues();

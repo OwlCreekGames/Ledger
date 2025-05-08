@@ -2,27 +2,27 @@
 
 #include "LedgerDomain.h"
 
-bool ULedgerDomain::HasKey(const FName Key) const
+bool ULedgerDomain::HasName(const FName Name) const
 {
-	return State.Contains(Key);
+	return State.Contains(Name);
 }
 
-TArray<FName> ULedgerDomain::GetKeys() const
+TArray<FName> ULedgerDomain::GetNames() const
 {
-	TArray<FName> Keys;
-	State.GetKeys(Keys);
-	return Keys;
+	TArray<FName> Names;
+	State.GetKeys(Names);
+	return Names;
 }
 
-bool ULedgerDomain::TrySetValue(const FName Key, const FLedgerValue& Value)
+bool ULedgerDomain::TrySetValue(const FName Name, const FLedgerValue& Value)
 {
-	State.Add(Key, Value);
+	State.Add(Name, Value);
 	return true;
 }
 
-bool ULedgerDomain::TryGetValue(const FName Key, FLedgerValue& OutValue) const
+bool ULedgerDomain::TryGetValue(const FName Name, FLedgerValue& OutValue) const
 {
-	if (const FLedgerValue* Found = State.Find(Key))
+	if (const FLedgerValue* Found = State.Find(Name))
 	{
 		OutValue = *Found;
 		return true;
@@ -32,17 +32,17 @@ bool ULedgerDomain::TryGetValue(const FName Key, FLedgerValue& OutValue) const
 }
 
 template<typename T>
-bool ULedgerDomain::TrySet(const FName Key, const T& InValue)
+bool ULedgerDomain::TrySet(const FName Name, const T& InValue)
 {
 	const FLedgerValue Value(InValue);
-	return TrySetValue(Key, Value);
+	return TrySetValue(Name, Value);
 }
 
 template<typename T>
-bool ULedgerDomain::TryGet(const FName Key, T& OutValue) const
+bool ULedgerDomain::TryGet(const FName Name, T& OutValue) const
 {
 	FLedgerValue Value;
-	if (TryGetValue(Key, Value))
+	if (TryGetValue(Name, Value))
 	{
 		return Value.TryGet(OutValue);
 	}

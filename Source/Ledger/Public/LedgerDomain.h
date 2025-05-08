@@ -8,6 +8,7 @@
 #include "LedgerValue.h"
 #include "LedgerDomain.generated.h"
 
+class ULedgerDomainConfig;
 /**
  *
  */
@@ -17,20 +18,23 @@ class LEDGER_API ULedgerDomain : public UObject
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadOnly, Category = "Ledger")
+	TObjectPtr<ULedgerDomainConfig> DomainConfig;
+	
 	UFUNCTION(BlueprintCallable, Category = "Ledger")
-	virtual bool HasKey(FName Key) const;
+	virtual bool HasName(FName Name) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Ledger")
-	virtual TArray<FName> GetKeys() const;
+	virtual TArray<FName> GetNames() const;
 
-	virtual bool TrySetValue(const FName Key, const FLedgerValue& Value);
-	bool TryGetValue(const FName Key, FLedgerValue& OutValue) const;
+	virtual bool TrySetValue(const FName Name, const FLedgerValue& Value);
+	bool TryGetValue(const FName Name, FLedgerValue& OutValue) const;
 	
 	template<typename T>
-	bool TrySet(const FName Key, const T& InValue);
+	bool TrySet(const FName Name, const T& InValue);
 	
 	template<typename T>
-	bool TryGet(const FName Key, T& OutValue) const;
+	bool TryGet(const FName Name, T& OutValue) const;
 
 protected:
 

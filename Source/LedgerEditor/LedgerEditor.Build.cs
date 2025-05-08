@@ -9,19 +9,26 @@ public class LedgerEditor : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "Core",
+                "Core", 
+                "GraphEditor",
             }
         );
 
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
+                "BlueprintGraph",
                 "CoreUObject",
+                "EditorStyle",
                 "Engine",
+                "InputCore",
+                "Kismet",
+                "KismetCompiler",
+                "UnrealEd",
                 "Slate",
                 "SlateCore",
                 "PropertyEditor",
-                "Ledger"
+                "Ledger",
             }
         );
     }

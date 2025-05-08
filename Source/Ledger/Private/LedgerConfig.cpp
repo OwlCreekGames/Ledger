@@ -1,8 +1,8 @@
 ﻿// Copyright Owl Creek Games. All Rights Reserved.
 
 
-#include "LedgerData.h"
-#include "LedgerDomainData.h"
+#include "LedgerConfig.h"
+#include "LedgerDomainConfig.h"
 #include "Internationalization/Internationalization.h"
 
 #if WITH_EDITOR
@@ -13,12 +13,12 @@
 
 #define LOCTEXT_NAMESPACE "FLedgerModule"
 
-EDataValidationResult ULedgerData::IsDataValid(FDataValidationContext& Context) const
+EDataValidationResult ULedgerConfig::IsDataValid(FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context), EDataValidationResult::Valid);
 
 	int32 EntryIndex = 0;
-	for (const TObjectPtr<ULedgerDomainData>& DomainAsset : Domains)
+	for (const TObjectPtr<ULedgerDomainConfig>& DomainAsset : Domains)
 	{
 		if (DomainAsset)
 		{
