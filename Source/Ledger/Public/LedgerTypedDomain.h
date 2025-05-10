@@ -6,7 +6,7 @@
 #include "LedgerDomain.h"
 #include "LedgerTypedDomain.generated.h"
 
-struct FLedgerSchemaRow;
+struct FLedgerSchemaItem;
 class ULedgerSchemaConfig;
 
 /**
@@ -26,7 +26,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<ULedgerSchemaConfig> Schema;
 	
-	TMap<FName, uint8*> SchemaRowMap;
+	TMap<FName, const FLedgerSchemaItem*> SchemaLookupMap;
 
 	void InitializeSchemaLookupMap();
 	void InitializeDefaultValues();

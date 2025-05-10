@@ -1,6 +1,6 @@
 ﻿// Copyright Owl Creek Games. All Rights Reserved.
 
-#include "LedgerDomainConfigCustomization.h"
+#include "Customizations/LedgerDomainConfigCustomization.h"
 
 #include "LedgerDomainConfig.h"
 #include "LedgerTypedDomain.h" 

@@ -29,6 +29,7 @@ public class LedgerEditor : ModuleRules
                 "SlateCore",
                 "PropertyEditor",
                 "Ledger",
+                "DataValidation",
             }
         );
     }

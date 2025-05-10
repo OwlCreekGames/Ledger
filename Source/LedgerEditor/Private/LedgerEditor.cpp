@@ -1,8 +1,12 @@
 ﻿#include "LedgerEditor.h"
 
-#include "LedgerDomainConfigCustomization.h"
+#include "AssetToolsModule.h"
+#include "IAssetTools.h"
 #include "LedgerEditorNodeFactory.h"
 #include "LedgerEditorPinFactory.h"
+#include "AssetEditors/FAssetTypeActions_LedgerSchemaConfig.h"
+#include "Customizations/LedgerDomainConfigCustomization.h"
+#include "Customizations/LedgerSchemaItemCustomization.h"
 
 #define LOCTEXT_NAMESPACE "FLedgerEditorModule"
 
@@ -11,12 +15,6 @@ TSharedPtr<FLedgerEditorNodeFactory> LedgerNodeFactory;
 
 void FLedgerEditorModule::StartupModule()
 {
-	// LedgerPinFactory = MakeShareable(new FLedgerEditorPinFactory());
-	// FEdGraphUtilities::RegisterVisualPinFactory(LedgerPinFactory);
-	
-	// LedgerNodeFactory = MakeShareable(new FLedgerEditorNodeFactory());
-	// FEdGraphUtilities::RegisterVisualNodeFactory(LedgerNodeFactory);
-	
 	FPropertyEditorModule& PropertyEditor = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
 	PropertyEditor.RegisterCustomClassLayout(
@@ -24,19 +22,18 @@ void FLedgerEditorModule::StartupModule()
 		FOnGetDetailCustomizationInstance::CreateStatic(&FLedgerDomainConfigCustomization::MakeInstance)
 		);
 	
-	// PropertyEditor.RegisterCustomPropertyTypeLayout(
-	// 	"LedgerSchemaEntry",
-	// 	FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLedgerSchemaEntryCustomization::MakeInstance)
-	// );
+	PropertyEditor.RegisterCustomPropertyTypeLayout(
+		"LedgerSchemaItem",
+		FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLedgerSchemaItemCustomization::MakeInstance)
+	);
+
+	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	const TSharedRef<IAssetTypeActions> Action = MakeShareable(new FAssetTypeActions_LedgerSchemaConfig);
+	AssetTools.RegisterAssetTypeActions(Action);
 }
 
 void FLedgerEditorModule::ShutdownModule()
 {
-	// FEdGraphUtilities::UnregisterVisualPinFactory(LedgerPinFactory);
-	// LedgerPinFactory.Reset();
-
-	// FEdGraphUtilities::UnregisterVisualNodeFactory(LedgerNodeFactory);
-	// LedgerNodeFactory.Reset();
 }
 
 #undef LOCTEXT_NAMESPACE

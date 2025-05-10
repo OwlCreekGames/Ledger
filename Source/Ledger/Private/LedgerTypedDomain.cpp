@@ -7,6 +7,7 @@
 
 void ULedgerTypedDomain::InitializeFromSchema(ULedgerSchemaConfig* InSchema)
 {
+	
 	if (!InSchema)
 	{
 		const FName DomainName = DomainConfig ? DomainConfig->DomainName : TEXT("<Unknown Domain Name>");
@@ -22,23 +23,21 @@ void ULedgerTypedDomain::InitializeFromSchema(ULedgerSchemaConfig* InSchema)
 
 bool ULedgerTypedDomain::TrySetValue(const FName Name, const FLedgerValue& Value)
 {
-	uint8* const* RowPtr = SchemaRowMap.Find(Name);
-	if (!RowPtr)
+	const FLedgerSchemaItem** Entry = SchemaLookupMap.Find(Name);
+	if (!Entry)
 	{
 		UE_LOG(LogLedger, Warning,	TEXT("Name '%s' not found in domain schema."), *Name.ToString());
 		return false;
 	}
-	
-	const FLedgerSchemaRow* Row = reinterpret_cast<const FLedgerSchemaRow*>(*RowPtr);
-	
-	if (Value.GetType() != Row->Type)
+
+	if (Value.GetType() != (*Entry)->Type)
 	{
 		UE_LOG(
 			LogLedger,
 			Warning,
 			TEXT("Value type '%s' does not match schema type '%s' for name '%s'."),
 			*UEnum::GetValueAsString(Value.GetType()),
-			*UEnum::GetValueAsString(Row->Type),
+			*UEnum::GetValueAsString((*Entry)->Type),
 			*Name.ToString());
 		
 		return false;
@@ -49,11 +48,17 @@ bool ULedgerTypedDomain::TrySetValue(const FName Name, const FLedgerValue& Value
 
 void ULedgerTypedDomain::InitializeSchemaLookupMap()
 {
-	SchemaRowMap = Schema->Entries->GetRowMap();
+	SchemaLookupMap.Empty();
 
-	if (SchemaRowMap.Num() == 0)
+	if (Schema->Items.Num() == 0)
 	{
 		UE_LOG(LogLedger, Warning, TEXT("Ledger: Schema '%s' has no entries."), *Schema->GetName());
+		return;
+	}
+	
+	for (const FLedgerSchemaItem& Entry : Schema->Items)
+	{
+		SchemaLookupMap.Add(Entry.Name, &Entry);
 	}
 }
 
@@ -63,31 +68,28 @@ void ULedgerTypedDomain::InitializeDefaultValues()
 	{
 		return;
 	}
-
-	for (const auto& Row : SchemaRowMap)
+	
+	for (const FLedgerSchemaItem& Entry : Schema->Items)
 	{
-		if (const FLedgerSchemaRow* Entry = reinterpret_cast<FLedgerSchemaRow*>(Row.Value))
+		switch (Entry.Type)
 		{
-			switch (Entry->Type)
-			{
-				case ELedgerValueType::Int32:
-					TrySetValue(Row.Key, FLedgerValue(Entry->DefaultInt32));
-					break;
-						
-				case ELedgerValueType::Float:
-					TrySetValue(Row.Key, FLedgerValue(Entry->DefaultFloat));
-					break;
-						
-				case ELedgerValueType::Bool:
-					TrySetValue(Row.Key, FLedgerValue(Entry->DefaultBool));
-					break;
-						
-				case ELedgerValueType::String:
-					TrySetValue(Row.Key, FLedgerValue(Entry->DefaultString));
-					break;
-				default:
-					checkf(false, TEXT("FATAL: Unsupported type in ULedgerTypedDomain::InitializeFromSchema!"));
-			}
+		case ELedgerValueType::Int32:
+			TrySetValue(Entry.Name, FLedgerValue(Entry.DefaultInt32));
+			break;
+				
+		case ELedgerValueType::Float:
+			TrySetValue(Entry.Name, FLedgerValue(Entry.DefaultFloat));
+			break;
+				
+		case ELedgerValueType::Bool:
+			TrySetValue(Entry.Name, FLedgerValue(Entry.DefaultBool));
+			break;
+				
+		case ELedgerValueType::String:
+			TrySetValue(Entry.Name, FLedgerValue(Entry.DefaultString));
+			break;
+		default:
+			checkf(false, TEXT("FATAL: Unsupported type in ULedgerTypedDomain::InitializeFromSchema!"));
 		}
 	}
 }

@@ -83,6 +83,12 @@ void ULedgerSubsystem::InitializeFromConfig(const TObjectPtr<ULedgerConfig>& Led
 
 	for (const TObjectPtr<ULedgerDomainConfig>& DomainConfig : LedgerConfig->Domains)
 	{
+		if (DomainConfig == nullptr)
+		{
+			UE_LOG(LogLedger, Warning, TEXT("Ledger: Skipping null domain entry."));
+			continue;
+		}
+
 		if (DomainConfig->DomainName.IsNone())
 		{
 			UE_LOG(LogLedger, Warning, TEXT("Ledger: Skipping domain with empty name."));

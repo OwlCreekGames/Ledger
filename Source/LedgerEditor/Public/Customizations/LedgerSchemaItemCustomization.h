@@ -4,8 +4,7 @@
 
 #include "IPropertyTypeCustomization.h"
 
-/*
-class FLedgerSchemaEntryCustomization : public IPropertyTypeCustomization
+class FLedgerSchemaItemCustomization : public IPropertyTypeCustomization
 {
 public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
@@ -26,4 +25,3 @@ private:
 	TSharedPtr<IPropertyUtilities> PropertyUtilities;
 	IDetailChildrenBuilder* CachedChildrenBuilder = nullptr;
 };
-*/

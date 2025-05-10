@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract, BlueprintInternalUseOnly)
 class LEDGEREDITOR_API ULedgerK2Node : public UK2Node
 {
 	GENERATED_BODY()

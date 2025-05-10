@@ -15,13 +15,12 @@ bool FLedgerTypedDomain_HasName_TrueForNameInSchema::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
-	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = 42;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -46,13 +45,12 @@ bool FLedgerTypedDomain_HasName_FalseForNameNotInSchema::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
-	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = 42;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -77,16 +75,16 @@ bool FLedgerTypedDomain_GetNames::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
-	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("Name1");
 	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries->AddRow(FName("Name1"), Entry);
+	Schema->Items.Add(Entry);
 	
-	Entry = FLedgerSchemaRow();
+	Entry = FLedgerSchemaItem();
+	Entry.Name = FName("Name2");
 	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries->AddRow(FName("Name2"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -111,13 +109,12 @@ bool FLedgerTypedDomain_TryGetValue_Int32_Default::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = TEXT("TestName");
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = 42;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -146,13 +143,12 @@ bool FLedgerTypedDomain_TryGetValue_Float_Default::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::Float;
 	Entry.DefaultFloat = 1.5f;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -181,13 +177,12 @@ bool FLedgerTypedDomain_TryGetValue_Bool_Default::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = TEXT("TestName");
 	Entry.Type = ELedgerValueType::Bool;
 	Entry.DefaultBool = true;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -216,13 +211,12 @@ bool FLedgerTypedDomain_TryGetValue_String_Default::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::String;
 	Entry.DefaultString = TEXT("String Value");
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -251,12 +245,11 @@ bool FLedgerTypedDomain_TrySetValue_TrueForValidNameAndValue::RunTest(const FStr
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
-	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::Int32;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -283,13 +276,11 @@ bool FLedgerTypedDomain_TrySetValue_FalseForIncorrectType::RunTest(const FString
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
-	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::Int32;
-	Entry.DefaultInt32 = 42;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -315,13 +306,11 @@ bool FLedgerTypedDomain_TrySetValue_FalseForInvalidName::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
-	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::Int32;
-	Entry.DefaultInt32 = 42;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);
@@ -347,13 +336,12 @@ bool FLedgerTypedDomain_TryGetValue_Update::RunTest(const FString&)
 {
 	// Setup
 	ULedgerSchemaConfig* Schema = NewObject<ULedgerSchemaConfig>();
-	Schema->Entries = NewObject<UDataTable>(Schema, TEXT("Entries"));
-	Schema->Entries->RowStruct = FLedgerSchemaRow::StaticStruct();
 	
-	FLedgerSchemaRow Entry = FLedgerSchemaRow();
+	FLedgerSchemaItem Entry = FLedgerSchemaItem();
+	Entry.Name = FName("TestName");
 	Entry.Type = ELedgerValueType::Int32;
 	Entry.DefaultInt32 = -1;
-	Schema->Entries->AddRow(FName("TestName"), Entry);
+	Schema->Items.Add(Entry);
 	
 	ULedgerTypedDomain* Domain = NewObject<ULedgerTypedDomain>();
 	Domain->InitializeFromSchema(Schema);

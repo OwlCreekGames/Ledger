@@ -12,23 +12,28 @@ inline EDataValidationResult ULedgerSchemaConfig::IsDataValid(class FDataValidat
 {
 	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context), EDataValidationResult::Valid);
 
+	TArray<FName> Names;
 	int EntryIndex = 0;
-
-	for (const auto& Row : Entries->GetRowMap())
+	
+	for (const FLedgerSchemaItem& Entry : Items)
 	{
-		if (Row.Key.IsNone())
+		if (Entry.Name.IsNone())
 		{
 			Result = EDataValidationResult::Invalid;
-			Context.AddError(FText::Format(LOCTEXT("SchemaEntryNameIsNone", "Entry at index {0} has no name."), FText::AsNumber(EntryIndex)));
+			Context.AddError(FText::Format(LOCTEXT("Ledger.SchemaEntryNameIsNone", "Entry at index {0} has no name."), FText::AsNumber(EntryIndex)));
+		}
+
+		if (Names.Contains(Entry.Name))
+		{
+			Result = EDataValidationResult::Invalid;
+			Context.AddError(FText::Format(LOCTEXT("Ledger.SchemaEntryNameIsDuplicate", "Entry at index {0} has a duplicate name."), FText::AsNumber(EntryIndex)));
 		}
 		
-		// if (const FLedgerSchemaRow* SchemaRow = reinterpret_cast<FLedgerSchemaRow*>(Row.Value))
-		// {
-		// }
-		
+		Names.Add(Entry.Name);
+
 		++EntryIndex;
 	}
-	
+
 	return Result;
 }
 
